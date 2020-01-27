@@ -11,40 +11,35 @@ char **parseString(char *str){
     // check for null or empty string
     if(str == NULL || (strcmp(str, "") == 0)) return NULL;
 
-    int numTokens = 1;
-    // find number of tokens
+    int maxTokens = 1;
+    // find maximum of tokens possible
     for(int i = 0; *(str+i) != '\0'; i++){
         if(*(str+i) == ' '){
-            numTokens++;
+            maxTokens++;
         }
     }
-
-  printf("num of tokens = %d\n", numTokens);
 
     // create array of char * or strings
-    char **parsedcmd = (char **) calloc(numTokens+1, sizeof(char *)); 
-  printf("here too\n");
+    char **parsedcmd = (char **) calloc(maxTokens+1, sizeof(char *)); 
     char *token = strtok(str, " ");
    
-    // allocate memory for the token and copy over the contents
-    parsedcmd[0] = (char *) malloc((strlen(token)+1)*sizeof(char));
-    strcpy(parsedcmd[0], token);
+    int i = 0;
+    while(token != NULL){
+      //printf("the token is %s with length %ld\n", token, strlen(token));
 
- printf("wow still here\n");
-    for(int i = 1; i < numTokens; i++){
-        token = strtok(NULL, " ");
-
-        if(token == NULL){
-            // indicates excessive spaces (empty string used)
-            token = "\0";
-        }
-
+        // allocate memory for the token and copy over the contents
         parsedcmd[i] = (char *) malloc((strlen(token)+1)*sizeof(char));
         strcpy(parsedcmd[i], token);
-      printf("the token is %s with length %ld\n", parsedcmd[i], strlen(token));
+
+        // get next token
+        token = strtok(NULL, " ");
+        i++;
     }
 
-    parsedcmd[numTokens] = NULL;    // null terminating pointer array
+    // reallocate based on number of tokens
+ // printf("actual number of tokens %d\n", i);
+    parsedcmd = (char **) realloc(parsedcmd, (i+1)*sizeof(char *));
+    parsedcmd[i] = NULL;    // null terminating array of pointers
     return parsedcmd;
 }
 
@@ -63,7 +58,7 @@ char *getCommand(){
 
     command[i] = '\0';
     command = (char *) realloc(command, sizeof(char)*(strlen(command)+1));
-    printf("the length of the string is %ld\n", strlen(command));
+//    printf("the length of the string is %ld\n", strlen(command));
 
     return command;
 }
@@ -72,13 +67,14 @@ char *getCommand(){
 // free everything to take in more commands
 void freeAll(char *command, char**parsedcmd){
     free(command);
+    char **start = parsedcmd;
 
     while(*parsedcmd != NULL){
         free(*parsedcmd);
         parsedcmd++;
     }
 
-    free(parsedcmd);
+    free(start);
 }
     
     

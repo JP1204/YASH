@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include "command.h"
+#include "features.h"
 
 
 int main(int argc, char *argv[]){
@@ -22,21 +23,20 @@ int main(int argc, char *argv[]){
         parsedcmd = parseString(command);
         if(parsedcmd == NULL){
             // echo the command and prompt for new one
-            printf("%s\n", command);
+            printf("Invalid command\n%s\n", command);
+
             free(command);
             printf("cmd:");
             continue;
-        }    
+        } 
 
-     printf("command is %s\n", command);
         cpid = fork();
-
         if(cpid == 0){
             // execute command
-          //  execvp(parsedcmd[0], parsedcmd);
-          break;
+            execvp(parsedcmd[0], parsedcmd);
+            break;
         } else{
-            // free memory to prompt user for new command
+            // frees memory to prompt user for new command
             wait((int *)NULL);
             freeAll(command, parsedcmd);
             printf("cmd:");
