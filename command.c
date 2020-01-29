@@ -64,6 +64,11 @@ char *getCommand(){
 }
 
 
+// check if the command is a valid command implemented by yash
+// if not, return false to let bash execute the command
+
+
+
 // free everything to take in more commands
 void freeAll(char *command, char**parsedcmd){
     free(command);
