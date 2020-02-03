@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include "command.h"
 #include "redirect.h"
+#include "exec.h"
 
 
 int main(int argc, char *argv[]){
@@ -15,13 +16,15 @@ int main(int argc, char *argv[]){
 
     printf("cmd:");
     while(command = getCommand()){
+        // look for exit message
         if(strcmp(command, "exit") == 0){
-          printf("exiting\n");
+          printf("exiting session\n");
             free(command);
             exit(0);
         }
 
         parsedcmd = parseString(command);
+        // check for invalid command
         if(parsedcmd == NULL){
             // echo the command and prompt for new one
             printf("Invalid command\n%s\n", command);
@@ -31,23 +34,31 @@ int main(int argc, char *argv[]){
             continue;
         } 
 
+        int numTokens = findNumTokens(parsedcmd);
+
+        // look through tokens and let yash execute if it's a valid command
+        yashExec(parsedcmd, numTokens);
+
+/*
         cpid = fork();
         if(cpid == 0){
-            // execute command
-            if(strcmp(parsedcmd[1], ">") == 0){
-                // redirect into file
-                int ofd = creat(parsedcmd[2], 0644);
-                dup2(ofd, STDOUT_FILENO);
-                execlp(parsedcmd[0], parsedcmd[0], (char *) NULL);
-            }
+            // find the number of tokens
+          printf("inside child exec\n");
+            int numTokens = findNumTokens(parsedcmd);
+
+          printf("there are %d tokens\n", numTokens);
+
+            yashExec(parsedcmd, numTokens);
 
             execvp(parsedcmd[0], parsedcmd);
+          printf("command did not work\n");
+            exit(0);
         } else{
             // frees memory to prompt user for new command
             wait((int *)NULL);
             freeAll(command, parsedcmd);
             printf("cmd:");
-        }
+        }*/
     }
 }
 

@@ -25,8 +25,6 @@ char **parseString(char *str){
    
     int i = 0;
     while(token != NULL){
-      //printf("the token is %s with length %ld\n", token, strlen(token));
-
         // allocate memory for the token and copy over the contents
         parsedcmd[i] = (char *) malloc((strlen(token)+1)*sizeof(char));
         strcpy(parsedcmd[i], token);
@@ -37,13 +35,13 @@ char **parseString(char *str){
     }
 
     // reallocate based on number of tokens
- // printf("actual number of tokens %d\n", i);
     parsedcmd = (char **) realloc(parsedcmd, (i+1)*sizeof(char *));
     parsedcmd[i] = NULL;    // null terminating array of pointers
     return parsedcmd;
 }
 
 
+// get full command and return the string
 char *getCommand(){
     char *command = (char *) malloc(sizeof(char)*MAX_COMMAND_SIZE);
 
@@ -58,15 +56,52 @@ char *getCommand(){
 
     command[i] = '\0';
     command = (char *) realloc(command, sizeof(char)*(strlen(command)+1));
-//    printf("the length of the string is %ld\n", strlen(command));
 
     return command;
 }
 
 
-// check if the command is a valid command implemented by yash
-// if not, return false to let bash execute the command
+// returns pointer to new parsed command from token i to token j (for piping left and right side)
+// including token i but not including token j
+char **getSubCommand(char **parsedcmd, int i, int j){
+    char **subCommand = (char **) calloc((j-i+1), sizeof(char *));
+    char **head = subCommand;
+       
+    while(i < j){
+        // copy parsedcmd into subCommand
+        *subCommand = (char *) malloc(sizeof(char)*(strlen(parsedcmd[i])+1));
+        strcpy(*subCommand, parsedcmd[i]);
+        subCommand++;
+        i++;
+    }
 
+    *subCommand = NULL;
+    return head;
+}
+
+
+// print all the tokens
+void printTokens(char **parsedcmd){
+    printf("the tokens are: ");
+    for(int i = 0; parsedcmd[i] != NULL; i++){
+        printf("%s ", parsedcmd[i]);
+    }
+    printf("\n");
+}
+
+
+// return the amount of tokens
+int findNumTokens(char **parsedcmd){
+    int numTokens = 0;
+    char **temp = parsedcmd;
+
+    while(*temp != NULL){
+        numTokens++;
+        temp++;
+    }
+
+    return numTokens;
+}
 
 
 // free everything to take in more commands
