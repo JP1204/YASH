@@ -1,0 +1,14 @@
+command.c
+command.h
+exec.c
+exec.h
+input
+jobs.c
+jobs.h
+out.txt
+redirect.c
+redirect.h
+temp.txt
+wc
+yash
+yash.c

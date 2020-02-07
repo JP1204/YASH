@@ -34,31 +34,24 @@ int main(int argc, char *argv[]){
             continue;
         } 
 
-        int numTokens = findNumTokens(parsedcmd);
-
-        // look through tokens and let yash execute if it's a valid command
-        yashExec(parsedcmd, numTokens);
-
-/*
         cpid = fork();
         if(cpid == 0){
             // find the number of tokens
-          printf("inside child exec\n");
             int numTokens = findNumTokens(parsedcmd);
 
-          printf("there are %d tokens\n", numTokens);
-
+            // look through tokens and let yash execute if it's a valid command
             yashExec(parsedcmd, numTokens);
 
-            execvp(parsedcmd[0], parsedcmd);
           printf("command did not work\n");
             exit(0);
         } else{
             // frees memory to prompt user for new command
-            wait((int *)NULL);
+            int status;
+            int childPID = waitpid(cpid, &status, 0);
+          printf("checking does %d = %d?\n", cpid, childPID);
             freeAll(command, parsedcmd);
             printf("cmd:");
-        }*/
+        }
     }
 }
 
