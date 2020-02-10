@@ -1,1 +1,16 @@
- 3  6 38
+command.c
+command.h
+exec.c
+exec.h
+input
+jobs.c
+jobs.h
+loop
+out.txt
+redirect.c
+redirect.h
+signal.c
+signal.h
+txt.txt
+yash
+yash.c

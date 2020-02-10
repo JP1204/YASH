@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 #define MAX_COMMAND_SIZE 2000
 #define MAX_TOKEN_SIZE 30
 
@@ -101,6 +103,14 @@ int findNumTokens(char **parsedcmd){
     }
 
     return numTokens;
+}
+
+
+// get information about current process
+int getInfo(){
+    printf("the session leader is %d\n", getsid(0));
+    printf("pid is %d and pg id is %d\n", getpid(), getpgid(0));
+    printf("the fg pgid is %d\n\n", tcgetpgrp(0));
 }
 
 
