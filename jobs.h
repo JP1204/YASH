@@ -5,9 +5,6 @@
 #include <fcntl.h>
 #include <stdbool.h>
 
-// global pid variables for main parent and child
-int parentPID;
-int childPID;
 
 // Job structure
 typedef enum {RUNNING, STOPPED, DONE} STATE;
@@ -16,6 +13,7 @@ typedef struct Job {
     STATE state; 
     int jobid;  // unique value
     char *jobString;
+    char **argv;
     int pgid;   // used for signal handling
     bool bg;
     struct Job *next;
@@ -28,16 +26,28 @@ typedef struct {
 } jobList;
 
 
-Job *createJob(STATE st, int jobid, char *jobStr, bool bg, Job *next);
+Job *createJob(STATE st, int jobid, char *jobString, int pgid, bool bg, Job *next);
 
-jobList *createJobList();
+void addJob(Job *job);
 
-void addJob(Job *job, jobList *list);
+void printJobs();
 
-void printJobs(jobList *list);
+int removeJob(int pgid);
 
-int removeJob(int jobid, jobList *list);
+Job *getJob(int pgid);
 
-int change_process_state(pid_t pid, STATE jobState, jobList *list);
+int getJobid();
 
-Job *getRecentJob(jobList *list);
+int change_process_state(pid_t pid, STATE jobState);
+
+Job *getRecentJob();
+
+void fgExec();
+
+Job *fgGetJob();
+
+void waitForChild();
+
+void freeJob(Job *job);
+
+void removeAllJobs();

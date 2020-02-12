@@ -5,4 +5,4 @@
 // when it sees <, >, or |
 int yashExec(char **parsedcmd, int numTokens);
 
-void jobExec(char **command, jobList *allJobs);
+int jobExec(char **command);

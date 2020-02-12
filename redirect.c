@@ -61,20 +61,21 @@ void piping(char **leftCommand, char **rightCommand){
     int pipefd[2], status, done=0;
     pipe(pipefd);
 
-    int cpid = fork();
-    if(cpid == 0){  // left child process
-        close(pipefd[0]);
-        dup2(pipefd[1], STDOUT_FILENO); // set output to left of pipe to send
-        
-        int numTokens = findNumTokens(leftCommand);
-        yashExec(leftCommand, numTokens);
-        printf("left command failed\n");
-    }
+    close(pipefd[0]);   // closes right end of pipe for left command
+    dup2(pipefd[1], STDOUT_FILENO); // set output to left of pipe to send
+    
+    int numTokens = findNumTokens(leftCommand);
+    yashExec(leftCommand, numTokens);
+    printf("left command failed\n");
 
-    cpid = fork();
+    int c1pid = getpid();
+    int cpid = fork();
     if(cpid == 0){  // right child process
         close(pipefd[1]);
         dup2(pipefd[0], STDIN_FILENO);  // set input to right of pipe to receive
+
+        // puts child2 into same pg as child1
+        setpgid(0, c1pid); 
 
         int numTokens = findNumTokens(rightCommand);
         yashExec(rightCommand, numTokens);
@@ -84,8 +85,7 @@ void piping(char **leftCommand, char **rightCommand){
     close(pipefd[0]);
     close(pipefd[1]);
 
-    waitpid(-1, &status, 0);
-    waitpid(-1, &status, 0);
+//    waitpid(-1, &status, 0);
 }
 
 

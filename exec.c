@@ -16,8 +16,8 @@ void yashExec(char **parsedcmd, int numTokens){
             char **leftCommand = getSubCommand(parsedcmd, 0, i);
             char **rightCommand = getSubCommand(parsedcmd, i+1, numTokens);
           
-         //   printTokens(leftCommand);
-         //   printTokens(rightCommand);
+            printTokens(leftCommand);
+            printTokens(rightCommand);
 
             piping(leftCommand, rightCommand);
             exit(0);
@@ -62,17 +62,23 @@ void yashExec(char **parsedcmd, int numTokens){
 
 // check if fg, bg, or jobs are called and executes them
 // otherwise, do nothing
-void jobExec(char **command, jobList *allJobs){
-    if(findNumTokens(command) > 1) return;
-
+// returns 1 if successful, 0 otherwise
+int jobExec(char **command){
     if(strcmp(command[0], "jobs") == 0){
       //printf("jobs executing now\n");
-        printJobs(allJobs);
-        exit(0);
+        printJobs();
+        return 1;
     } else if(strcmp(command[0], "fg") == 0){
+        // sends the process to the foreground
+      printf("fg executing now\n");
+        fgExec();
+        return 1;
         
     } else if(strcmp(command[0], "bg") == 0){
-       
+      printf("bg executing now\n"); 
+        
     }
+
+    return 0;
 }
 

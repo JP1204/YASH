@@ -15,4 +15,6 @@ void printTokens(char **parsedcmd);
 
 void getInfo();
 
+int isJobCommand(char **command);
+
 void freeAll(char *command, char **parsedcmd);

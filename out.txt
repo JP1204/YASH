@@ -1,3 +1,4 @@
+about to execute: the tokens are: ls -al > out.txt 
 command.c
 command.h
 exec.c
@@ -11,6 +12,5 @@ redirect.c
 redirect.h
 signal.c
 signal.h
-txt.txt
 yash
 yash.c

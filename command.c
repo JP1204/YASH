@@ -108,22 +108,41 @@ int findNumTokens(char **parsedcmd){
 
 // get information about current process
 int getInfo(){
-    printf("the session leader is %d\n", getsid(0));
+//    printf("the session leader is %d\n", getsid(0));
     printf("pid is %d and pg id is %d\n", getpid(), getpgid(0));
     printf("the fg pgid is %d\n\n", tcgetpgrp(0));
 }
 
 
+// find out if command is a job command
+int isJobCommand(char **command){
+    if(strcmp(command[0], "jobs") == 0){
+        return 1; 
+    } else if(strcmp(command[0], "fg") == 0){
+        return 1;   
+    } else if(strcmp(command[0], "bg") == 0){
+        return 1; 
+    }
+    return 0;
+}  
+
+
 // free everything to take in more commands
 void freeAll(char *command, char**parsedcmd){
     free(command);
+
+  //  printf("finished freeing command\n");
     char **start = parsedcmd;
 
+    if(parsedcmd == NULL) printf("wtf?\n");
+
     while(*parsedcmd != NULL){
+//        printf("token: %s\n", *parsedcmd);
         free(*parsedcmd);
         parsedcmd++;
     }
 
+ // printf("here");
     free(start);
 }
     
