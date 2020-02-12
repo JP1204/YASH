@@ -1,0 +1,1 @@
+wc: fakefile.txt: No such file or directory

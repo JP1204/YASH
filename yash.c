@@ -13,6 +13,7 @@
 
 // global list of all jobs
 Job *jobListHead = NULL;
+Process *processListHead = NULL;
 
 int main(int argc, char *argv[]){
     int cpid;
@@ -38,14 +39,19 @@ int main(int argc, char *argv[]){
         if(strcmp(command, "exit") == 0){
           printf("exiting session\n");
             free(command);
+            removeAllProcesses();
+            removeAllJobs();
             exit(0);
         }
 
-        parsedcmd = parseString(command);
+        // create process struct for holding command and arguments
+        Process *procPtr = createProcess(command);
+        addProcess(procPtr);
+        char **parsedcmd = procPtr->argv;
+
         // check for invalid command
         if(parsedcmd == NULL){
             // echo the command and prompt for new one
-          // printf("Invalid command\n%s\n", command);
             free(command);
             printf("# ");
             continue;
@@ -64,28 +70,27 @@ int main(int argc, char *argv[]){
         bool bg;
         if(strcmp(parsedcmd[numTokens-1], "&") == 0){ 
             bg = true;
-            char **temp = parsedcmd;
-
-            parsedcmd = getSubCommand(temp, 0, numTokens-1);    // get arguments without the &
+            char **parsedcmd = getSubCommand(procPtr->argv, 0, numTokens-1);    // get arguments without the &
+            free(procPtr->argv);     // free previous arguments
+            procPtr->argv = parsedcmd;
             Command[strlen(Command)-2] = '\0';
-            free(temp);     // free previous arguments
+            printf("new command is %s\n", Command);
+            numTokens--;
         } else {
             bg = false;
         }
-           
+         
         cpid = fork();
         if(cpid == 0){
-            // set child pid
-            printf("in child\n");
-
             // creates new pg and makes child pg leader 
             setpgid(0, 0);     
-         //   getInfo();
-
+            
             // look through tokens and let yash execute if it's a valid command
-            yashExec(parsedcmd, numTokens);
+            yashExec(procPtr->argv, numTokens);
             exit(0);
         } else{
+         //printf("about to create jobs!!!!\n");
+
             // create a job and add it to the jobList
             Job *jobPtr;
             jobPtr = createJob(RUNNING, getJobid(), Command, cpid, bg, NULL);
@@ -97,8 +102,6 @@ int main(int argc, char *argv[]){
                 waitForChild(cpid);
             }
 
-            // frees memory to prompt user for new command
-            freeAll(command, parsedcmd);
             printf("# ");
         }
     }

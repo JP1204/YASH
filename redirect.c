@@ -44,7 +44,7 @@ void redirectIn(char *file){
 
 void redirectErr(char *file){
     printf("printing error to %s\n", file);
-    int fd = open(file, O_RDONLY|O_CREAT, 0644);
+    int fd = open(file, O_WRONLY|O_TRUNC|O_CREAT, 0644);
 
     // check if open succeeded 
     if(fd == -1){
@@ -60,16 +60,22 @@ void redirectErr(char *file){
 void piping(char **leftCommand, char **rightCommand){
     int pipefd[2], status, done=0;
     pipe(pipefd);
-
-    close(pipefd[0]);   // closes right end of pipe for left command
-    dup2(pipefd[1], STDOUT_FILENO); // set output to left of pipe to send
-    
-    int numTokens = findNumTokens(leftCommand);
-    yashExec(leftCommand, numTokens);
-    printf("left command failed\n");
-
     int c1pid = getpid();
+
     int cpid = fork();
+    if(cpid == 0){
+        close(pipefd[0]);   // closes right end of pipe for left command
+        dup2(pipefd[1], STDOUT_FILENO); // set output to left of pipe to send
+    
+        // puts child1 into main child
+        setpgid(0, c1pid);
+
+        int numTokens = findNumTokens(leftCommand);
+        yashExec(leftCommand, numTokens);
+        printf("left command failed\n");
+    }
+
+    cpid = fork();
     if(cpid == 0){  // right child process
         close(pipefd[1]);
         dup2(pipefd[0], STDIN_FILENO);  // set input to right of pipe to receive
@@ -85,7 +91,8 @@ void piping(char **leftCommand, char **rightCommand){
     close(pipefd[0]);
     close(pipefd[1]);
 
-//    waitpid(-1, &status, 0);
+    waitpid(-1, &status, 0);
+    waitpid(-1, &status, 0);
 }
 
 

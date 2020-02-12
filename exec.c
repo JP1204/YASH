@@ -26,34 +26,46 @@ void yashExec(char **parsedcmd, int numTokens){
 
     // look for redirection
     int numRedirect = 0;
+    char **command;
     for(int i = 0; i < numTokens-1; i++){
         if(strcmp(parsedcmd[i], "<") == 0){
             // redirect in
-            char **leftCommand = getSubCommand(parsedcmd, 0, i);
             redirectIn(parsedcmd[i+1]);     // get file after the < token
             numRedirect++;
+            if(numRedirect == 1){
+                // get full command
+                command = getSubCommand(parsedcmd, 0, i);
+            }
         }
         if(strcmp(parsedcmd[i], ">") == 0){
             // redirect out
-            char **leftCommand = getSubCommand(parsedcmd, 0, i);
             redirectOut(parsedcmd[i+1]);
             numRedirect++;
+            if(numRedirect == 1){
+                // get full command
+                command = getSubCommand(parsedcmd, 0, i);
+            }
         }
         if(strcmp(parsedcmd[i], "2>") == 0){
             // redirect error  
-            char **leftCommand = getSubCommand(parsedcmd, 0, i);
             redirectErr(parsedcmd[i+1]);
             numRedirect++;
+            if(numRedirect == 1){
+                // get full command
+                command = getSubCommand(parsedcmd, 0, i);
+            }
+
         }
     }
 
     // check if redirection is found
     // if so execute the command
     if(numRedirect > 0){
-        execlp(parsedcmd[0], parsedcmd[0], (char *) NULL);
+        // printf("full command: "); printTokens(command);
+        execvp(command[0], command);
     } else {
         // if not, execute bash version
-        printf("executing bash version\n");
+//        printf("executing bash version\n");
         execvp(parsedcmd[0], parsedcmd);
       printf("command failed\n");
     }
@@ -70,13 +82,13 @@ int jobExec(char **command){
         return 1;
     } else if(strcmp(command[0], "fg") == 0){
         // sends the process to the foreground
-      printf("fg executing now\n");
+    //  printf("fg executing now\n");
         fgExec();
         return 1;
         
     } else if(strcmp(command[0], "bg") == 0){
       printf("bg executing now\n"); 
-        
+      return 1;  
     }
 
     return 0;

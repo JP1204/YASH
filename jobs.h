@@ -6,6 +6,14 @@
 #include <stdbool.h>
 
 
+// Process structure
+typedef struct Process {
+    char *command;
+    char **argv;
+    struct Process *next;
+} Process;
+
+
 // Job structure
 typedef enum {RUNNING, STOPPED, DONE} STATE;
 
@@ -13,7 +21,7 @@ typedef struct Job {
     STATE state; 
     int jobid;  // unique value
     char *jobString;
-    char **argv;
+    //char **argv;
     int pgid;   // used for signal handling
     bool bg;
     struct Job *next;
@@ -25,6 +33,9 @@ typedef struct {
     Job *head;
 } jobList;
 
+Process *createProcess(char *command);
+
+void addProcess(Process *process);
 
 Job *createJob(STATE st, int jobid, char *jobString, int pgid, bool bg, Job *next);
 
@@ -48,6 +59,12 @@ Job *fgGetJob();
 
 void waitForChild();
 
+int getNumJobs();
+
+void freeProcess(Process *p);
+
 void freeJob(Job *job);
+
+void removeAllProcesses();
 
 void removeAllJobs();

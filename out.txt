@@ -1,16 +1,22 @@
-about to execute: the tokens are: ls -al > out.txt 
-command.c
-command.h
-exec.c
-exec.h
-input
-jobs.c
-jobs.h
-loop
-out.txt
-redirect.c
-redirect.h
-signal.c
-signal.h
-yash
-yash.c
+full command: the tokens are: ls -al 
+total 140
+drwxr-xr-x 3 jchoo jchoo  4096 Feb 12 03:48 .
+drwxr-xr-x 8 jchoo jchoo  4096 Feb 11 22:38 ..
+-rw-r--r-- 1 jchoo jchoo  3578 Feb 12 03:01 command.c
+-rw-r--r-- 1 jchoo jchoo   391 Feb 10 18:52 command.h
+-rw-r--r-- 1 jchoo jchoo  2721 Feb 12 03:48 exec.c
+-rw-r--r-- 1 jchoo jchoo 12288 Feb 12 03:48 .exec.c.swp
+-rw-r--r-- 1 jchoo jchoo   189 Feb 11 18:22 exec.h
+drwxr-xr-x 8 jchoo jchoo  4096 Feb 11 19:24 .git
+-rwxr-xr-x 1 jchoo jchoo  8400 Feb  7 13:35 input
+-rw-r--r-- 1 jchoo jchoo  7771 Feb 12 03:00 jobs.c
+-rw-r--r-- 1 jchoo jchoo  1100 Feb 11 23:33 jobs.h
+-rwxr-xr-x 1 jchoo jchoo  8168 Feb  8 23:22 loop
+-rw-r--r-- 1 jchoo jchoo    38 Feb 12 03:48 out.txt
+-rw-r--r-- 1 jchoo jchoo  2193 Feb 10 18:30 redirect.c
+-rw-r--r-- 1 jchoo jchoo   241 Feb  7 13:51 redirect.h
+-rw-r--r-- 1 jchoo jchoo  2728 Feb 12 02:40 signal.c
+-rw-r--r-- 1 jchoo jchoo   162 Feb 10 13:06 signal.h
+-rw-r--r-- 1 jchoo jchoo     1 Feb 12 02:54 temp.txt
+-rwxr-xr-x 1 jchoo jchoo 39416 Feb 12 03:48 yash
+-rw-r--r-- 1 jchoo jchoo  3322 Feb 12 03:39 yash.c

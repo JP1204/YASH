@@ -129,15 +129,16 @@ int isJobCommand(char **command){
 
 // free everything to take in more commands
 void freeAll(char *command, char**parsedcmd){
+ // printf("freeing everyting\n");
     free(command);
 
-  //  printf("finished freeing command\n");
+  //printf("finished freeing command\n");
     char **start = parsedcmd;
 
-    if(parsedcmd == NULL) printf("wtf?\n");
+    if(parsedcmd == NULL) return; 
 
     while(*parsedcmd != NULL){
-//        printf("token: %s\n", *parsedcmd);
+   //     printf("freeing token: %s\n", *parsedcmd);
         free(*parsedcmd);
         parsedcmd++;
     }
