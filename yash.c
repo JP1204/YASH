@@ -34,14 +34,6 @@ int main(int argc, char *argv[]){
         char Command[MAX_COMMAND_SIZE];
         strcpy(Command, command);
 
-        // look for exit message
-        if(strcmp(command, "exit") == 0){
-            free(command);
-            removeAllProcesses();
-            removeAllJobs();
-            exit(0);
-        }
-
         // create process struct for holding command and arguments
         Process *procPtr = createProcess(command);
         addProcess(procPtr);

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "jobs.h"
 #define MAX_COMMAND_SIZE 2000
 #define MAX_TOKEN_SIZE 30
 
@@ -48,11 +49,23 @@ char *getCommand(){
     char *command = (char *) malloc(sizeof(char)*MAX_COMMAND_SIZE);
 
     char c = getc(stdin);
+    if(c == EOF){
+        free(command);
+        removeAllProcesses();
+        removeAllJobs();
+        exit(0);
+    }
     int i = 0;
 
     while(c != '\n'){
         command[i] = c;
         c = getc(stdin);
+        if(c == EOF){
+            free(command);
+            removeAllProcesses();
+            removeAllJobs();
+            exit(0);
+        }
         i++;
     }
 
