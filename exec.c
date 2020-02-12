@@ -15,9 +15,6 @@ void yashExec(char **parsedcmd, int numTokens){
             // get the left and right commands
             char **leftCommand = getSubCommand(parsedcmd, 0, i);
             char **rightCommand = getSubCommand(parsedcmd, i+1, numTokens);
-          
-            printTokens(leftCommand);
-            printTokens(rightCommand);
 
             piping(leftCommand, rightCommand);
             exit(0);
@@ -25,8 +22,8 @@ void yashExec(char **parsedcmd, int numTokens){
     }
 
     // look for redirection
-    int numRedirect = 0;
     char **command;
+    int numRedirect = 0;
     for(int i = 0; i < numTokens-1; i++){
         if(strcmp(parsedcmd[i], "<") == 0){
             // redirect in
@@ -57,17 +54,10 @@ void yashExec(char **parsedcmd, int numTokens){
 
         }
     }
-
-    // check if redirection is found
-    // if so execute the command
     if(numRedirect > 0){
-        // printf("full command: "); printTokens(command);
         execvp(command[0], command);
-    } else {
-        // if not, execute bash version
-//        printf("executing bash version\n");
+    } else{
         execvp(parsedcmd[0], parsedcmd);
-      printf("command failed\n");
     }
 }
 
@@ -77,18 +67,16 @@ void yashExec(char **parsedcmd, int numTokens){
 // returns 1 if successful, 0 otherwise
 int jobExec(char **command){
     if(strcmp(command[0], "jobs") == 0){
-      //printf("jobs executing now\n");
         printJobs();
         return 1;
     } else if(strcmp(command[0], "fg") == 0){
         // sends the process to the foreground
-    //  printf("fg executing now\n");
         fgExec();
         return 1;
         
     } else if(strcmp(command[0], "bg") == 0){
-      printf("bg executing now\n"); 
-      return 1;  
+        bgExec();
+        return 1;  
     }
 
     return 0;

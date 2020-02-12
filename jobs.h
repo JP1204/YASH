@@ -57,6 +57,10 @@ void fgExec();
 
 Job *fgGetJob();
 
+void bgExec();
+
+Job *bgGetJob();
+
 void waitForChild();
 
 int getNumJobs();

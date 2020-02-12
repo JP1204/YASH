@@ -95,10 +95,6 @@ void printJobs(){
     char currentJob;
     char jobState[10];
 
-  //  if(temp == NULL){ printf("oh no\n");}
-  //  if(jobListHead == NULL){ printf("oh no 2\n");};
-
-//    printf("got here\n");
     while(temp != NULL){
         // check if job is most recent job (last in list)
         if(temp->next == NULL) { currentJob = '+'; }
@@ -112,8 +108,11 @@ void printJobs(){
             case DONE:
                 strcpy(jobState, "Done"); break;
         }
-        printf("[%d] %c %s\t\t%s\n", temp->jobid, currentJob, jobState, temp->jobString);
-    //    printf("in loop\n");
+        printf("[%d] %c %s\t\t%s", temp->jobid, currentJob, jobState, temp->jobString);
+        if(temp->bg){
+            printf(" &\n");
+        } else { printf("\n"); }
+
         temp = temp->next;
     }
 }
@@ -207,14 +206,10 @@ int change_process_state(pid_t pid, STATE jobState){
 Job *getRecentJob(){
     Job *temp = jobListHead;
 
-//printf("finally here\n");
     Job *prev = NULL;
- //   printf("noooo\n");
     while(temp != NULL){
-  //      printf("another one\n");
         prev = temp;
         temp = temp->next;
-   //     printf("another loop\n");
     }
 
     return prev;
@@ -225,8 +220,8 @@ Job *getRecentJob(){
 // and prints the process to stdout
 void fgExec(){
     Job *jobPtr = getRecentJob();
-   
-  printf("%s", jobPtr->jobString);
+    
+    printf("%s", jobPtr->jobString);
     if(jobPtr->bg)
         printf(" &\n");
     else
@@ -250,7 +245,6 @@ void fgExec(){
 // gets most recent background or stopped process
 // returns NULL if there is none
 Job *fgGetJob(){
-   printf("getting fg job now\n");
     Job *temp = jobListHead;
     Job *recent = NULL;     // keeps track of most recent process for fg
 
@@ -270,6 +264,53 @@ Job *fgGetJob(){
     return recent;
 }
 
+
+void bgExec(){
+    Job *jobPtr = bgGetJob();
+    if(jobPtr == NULL) return;
+
+    char recent;
+    char jobState[10];
+    if(getRecentJob() == jobPtr){
+        recent = '+';
+    } else { recent = '-'; }
+
+    switch(jobPtr->state){
+        case RUNNING:
+            strcpy(jobState, "Running"); break;
+        case STOPPED:
+            strcpy(jobState, "Stopped"); break;
+        case DONE:
+            strcpy(jobState, "Done"); break;
+    }
+
+    // print job in format
+    printf("[%d] %c %s\t\t%s &\n", jobPtr->jobid, recent, jobState, jobPtr->jobString);
+
+    jobPtr->state = RUNNING;
+    jobPtr->bg = true;
+
+    // send sigcont to pgid
+    int pgid = jobPtr->pgid;
+    kill(pgid, SIGCONT);
+}
+
+
+// get the most recent stopped process 
+Job *bgGetJob(){
+    Job *temp = jobListHead;
+    Job *recent = NULL;
+
+    while(temp != NULL){
+        if(temp->state == STOPPED){
+            recent = temp;
+        }
+
+        temp = temp->next;
+    }
+
+    return recent;
+}
 
 int getNumJobs(){
     Job *temp = jobListHead;
@@ -292,8 +333,6 @@ void waitForChild(int pid){
     Job *childJobPtr = getJob(pid);
     if(childJobPtr == NULL) return;
 
-   printf("gonna wait on child %d\n", pid);
-
     // waits until child changes state
     while(1){
      //   printf("stuck  \n");
@@ -302,13 +341,10 @@ void waitForChild(int pid){
             if(childJobPtr->state != RUNNING){
                 // remove job from list
                 if(childJobPtr->state == DONE){
-                    printf("stop waiting because child finished\n");
                     removeJob(childJobPtr->pgid);
                     return;
                 }
 
-         //      printf("hello, %d?\n", pid);
-                printf("stop waiting because child stopped\n");
                 return;   // child stopped
             }
         } else{

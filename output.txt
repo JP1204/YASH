@@ -1,3 +1,0 @@
-full command: the tokens are: cat 
-full command: the tokens are: echo "hello world" 
-"hello world"

@@ -1,2 +1,0 @@
-full command: the tokens are: echo "hello world" 
-"hello world"

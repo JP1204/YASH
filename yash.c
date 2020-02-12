@@ -31,13 +31,11 @@ int main(int argc, char *argv[]){
     printf("# ");
     while(command = getCommand()){
         // keep a copy of original command before parsing
-       printf("original command is %s\n", command);
         char Command[MAX_COMMAND_SIZE];
         strcpy(Command, command);
 
         // look for exit message
         if(strcmp(command, "exit") == 0){
-          printf("exiting session\n");
             free(command);
             removeAllProcesses();
             removeAllJobs();
@@ -74,7 +72,6 @@ int main(int argc, char *argv[]){
             free(procPtr->argv);     // free previous arguments
             procPtr->argv = parsedcmd;
             Command[strlen(Command)-2] = '\0';
-            printf("new command is %s\n", Command);
             numTokens--;
         } else {
             bg = false;
@@ -89,8 +86,6 @@ int main(int argc, char *argv[]){
             yashExec(procPtr->argv, numTokens);
             exit(0);
         } else{
-         //printf("about to create jobs!!!!\n");
-
             // create a job and add it to the jobList
             Job *jobPtr;
             jobPtr = createJob(RUNNING, getJobid(), Command, cpid, bg, NULL);

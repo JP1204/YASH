@@ -10,14 +10,12 @@
 
 // redirects stdout of command to file
 void redirectOut(char *file){
-    printf("printing output to file %s\n", file);
     // opens file with read and write permissions
     // but creates the file if it doesn't exist
     int fd = open(file, O_WRONLY|O_TRUNC|O_CREAT, 0644);
  
     // check if open succeeded
     if(fd == -1){
-        printf("file %s could not be opened\n", file);
         exit(0);
     }
 
@@ -26,14 +24,11 @@ void redirectOut(char *file){
 
 
 void redirectIn(char *file){
-    printf("feeding file %s in\n", file);
     int fd = open(file, O_RDONLY, 0644);
 
     // check if open succeeded (file exists)
     if(fd == -1){
         // fail command if file doesn't exist
-        printf("file %s does not exist\n", file);
-
         exit(0);
     }
 
@@ -43,12 +38,10 @@ void redirectIn(char *file){
 
 
 void redirectErr(char *file){
-    printf("printing error to %s\n", file);
     int fd = open(file, O_WRONLY|O_TRUNC|O_CREAT, 0644);
 
     // check if open succeeded 
     if(fd == -1){
-        printf("file %s could not be opened\n", file);
         exit(0);
     }
 
@@ -72,7 +65,6 @@ void piping(char **leftCommand, char **rightCommand){
 
         int numTokens = findNumTokens(leftCommand);
         yashExec(leftCommand, numTokens);
-        printf("left command failed\n");
     }
 
     cpid = fork();
@@ -85,7 +77,6 @@ void piping(char **leftCommand, char **rightCommand){
 
         int numTokens = findNumTokens(rightCommand);
         yashExec(rightCommand, numTokens);
-        printf("right command failed\n");
     }
 
     close(pipefd[0]);
